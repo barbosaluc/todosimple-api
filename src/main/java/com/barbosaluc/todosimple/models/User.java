@@ -33,6 +33,9 @@ public class User {
     @Size(min = 8 , max = 60)
     private String password;
 
+    @OneToMany(mappebBy = "user")
+    private List<Task> tasks = new ArrayList<Task>();
+
     @Override
     public int hashCode() {
         final int prime = 31;
