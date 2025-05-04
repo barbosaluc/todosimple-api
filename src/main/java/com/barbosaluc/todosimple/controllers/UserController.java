@@ -23,7 +23,7 @@ import com.barbosaluc.todosimple.models.User.UpdateUser;
 import com.barbosaluc.todosimple.services.UserService;
 
 @RestController
-@RequestMapping(value = "/User")
+@RequestMapping(value = "/user")
 @Validated
 public class UserController {
 
