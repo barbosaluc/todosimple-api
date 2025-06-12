@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+import javax.xml.bind.DataBindingException;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.barbosaluc.todosimple.models.Task;
 import com.barbosaluc.todosimple.models.User;
 import com.barbosaluc.todosimple.repositories.TaskRepository;
+import com.barbosaluc.todosimple.services.exceptions.DataBindingViolationException;
 
 @Service
 public class TaskService {
@@ -23,9 +26,8 @@ public class TaskService {
 
     public Task findById(long id) {
         Optional<Task> task = taskRepository.findById(id);
-        return task.orElseThrow(() -> new RuntimeException(
-            "Tarefa não encontrada! id: " + id + ",Tipo: " + Task.class.getName()
-            ));       
+        return task.orElseThrow(() -> new ObjectNotFoundException(
+            "Tarefa não encontrada! id: " + id + ",Tipo: " + id,Task.class.getName()));       
     }
 
     public List<Task> findAllByUserId(long userId){
@@ -54,7 +56,7 @@ public class TaskService {
         try {
             this.taskRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException(
+            throw new DataBindingViolationException(
                 "Não é possível excluir tarefa com usuários associados!" );
         }
         
