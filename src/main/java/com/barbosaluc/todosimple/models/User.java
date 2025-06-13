@@ -53,7 +53,7 @@ public class User {
     @NotNull
     @NotEmpty
     @Size(min = 2, max = 100)
-    private String userName;
+    private String username;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @Column(name = "password", length = 06, nullable = false)
@@ -80,6 +80,7 @@ public class User {
     public void addProfile(ProfileEnum profileEnum) {
         this.profiles.add(profileEnum.getCode());
     }
+
 
 }
     
