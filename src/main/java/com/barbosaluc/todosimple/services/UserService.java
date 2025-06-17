@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import com.barbosaluc.todosimple.models.User;
 import com.barbosaluc.todosimple.models.enums.ProfileEnum;
 import com.barbosaluc.todosimple.repositories.UserRepository;
 import com.barbosaluc.todosimple.services.exceptions.DataBindingViolationException;
+import com.barbosaluc.todosimple.services.exceptions.ObjectNotFoundException;
 
 
 @Service
@@ -27,7 +27,7 @@ public class UserService {
     public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException(
-            "Usuário não encontrado! id: " + id + ", Tipo: " + User.class.getName(),));
+            "Usuário não encontrado! id: " + id + ", Tipo: " + User.class.getName()));
     }
 
     @Transactional

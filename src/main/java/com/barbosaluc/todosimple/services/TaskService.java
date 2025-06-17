@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
-import javax.xml.bind.DataBindingException;
 
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
