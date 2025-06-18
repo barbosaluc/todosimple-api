@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.barbosaluc.todosimple.security.JWTAuthenticationFilter;
+import com.barbosaluc.todosimple.security.JWTAuthorizationFilter;
 import com.barbosaluc.todosimple.security.JWTUtil;
 
 
@@ -65,6 +66,8 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManager);
 
         http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, jwtUtil, 
+                this.userDetailsService));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
