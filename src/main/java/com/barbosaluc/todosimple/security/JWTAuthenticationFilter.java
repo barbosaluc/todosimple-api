@@ -1,7 +1,7 @@
 package com.barbosaluc.todosimple.security;
 
 import java.util.ArrayList;
-
+import java.io.IOException;
 import org.springframework.security.core.AuthenticationException;
 
 import javax.servlet.FilterChain;
@@ -18,7 +18,6 @@ import com.barbosaluc.todosimple.exceptions.GlobalExceptionHandler;
 import com.barbosaluc.todosimple.models.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.io.IOException;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
 

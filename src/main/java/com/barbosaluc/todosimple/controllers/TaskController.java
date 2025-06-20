@@ -21,7 +21,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.barbosaluc.todosimple.models.Task;
 import com.barbosaluc.todosimple.models.Task.CreateTask;
 import com.barbosaluc.todosimple.services.TaskService;
-import com.barbosaluc.todosimple.services.UserService;
 
 @RestController
 @RequestMapping(value = "/task")
@@ -31,19 +30,15 @@ public class TaskController {
     @Autowired
     public TaskService taskService;
 
-    @Autowired
-    public UserService userService;
-
     @GetMapping("/{id}")
     public ResponseEntity<Task> findById(@PathVariable long id){
         Task obj = this.taskService.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Task>> findAllByUserId(@PathVariable long userId){
-        this.userService.findById(userId);
-        List<Task> objs = this.taskService.findAllByUserId(userId);
+    @GetMapping("/user")
+    public ResponseEntity<List<Task>> findAllByUser(){
+        List<Task> objs = this.taskService.findAllByUser();
         return ResponseEntity.ok().body(objs);
     }
 

@@ -1,7 +1,7 @@
 package com.barbosaluc.todosimple.services;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.barbosaluc.todosimple.models.Task;
 import com.barbosaluc.todosimple.models.User;
+import com.barbosaluc.todosimple.models.enums.ProfileEnum;
 import com.barbosaluc.todosimple.repositories.TaskRepository;
+import com.barbosaluc.todosimple.security.UserSpringSecurity;
+import com.barbosaluc.todosimple.services.exceptions.AuthorizationException;
 import com.barbosaluc.todosimple.services.exceptions.DataBindingViolationException;
 
 @Service
@@ -23,21 +26,35 @@ public class TaskService {
     @Autowired
     private UserService userService;
 
-    public Task findById(long id) {
-        Optional<Task> task = taskRepository.findById(id);
-        return task.orElseThrow(() -> new ObjectNotFoundException(
-            "Tarefa não encontrada! id: " + id + ",Tipo: " + id,Task.class.getName()));       
+    public Task findById(Long id) {
+        Task task = this.taskRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(
+            "Tarefa não encontrada! id: " + id + ", Tipo: " + id,Task.class.getName()));    
+
+        UserSpringSecurity userSpringSecurity = UserService.authenticated();
+        if (Objects.isNull(userSpringSecurity) 
+                || (!userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !userHasTask(userSpringSecurity, task)))
+            throw new AuthorizationException("Acesso negado!");
+            
+        return task;
     }
 
-    public List<Task> findAllByUserId(long userId){
-        List<Task> tasks = this.taskRepository.findByUser_Id(userId);
+    public List<Task> findAllByUser() {
+        UserSpringSecurity userSpringSecurity = UserService.authenticated();
+        if (Objects.isNull(userSpringSecurity))
+            throw new AuthorizationException("Acesso negado!");
+        List<Task> tasks = this.taskRepository.findByUser_Id(userSpringSecurity.getId());
         return tasks;
     }
 
     @Transactional
     public Task create(Task obj) {
-        User user = this.userService.findById(obj.getUser().getId());
-        obj.setId(0L);
+        UserSpringSecurity userSpringSecurity = UserService.authenticated();
+        if (Objects.isNull(userSpringSecurity))
+            throw new AuthorizationException("Acesso negado!");
+        
+
+        User user = this.userService.findById(userSpringSecurity.getId());
+        obj.setId(null);
         obj.setUser(user);
         obj = this.taskRepository.save(obj);
         return obj;
@@ -50,7 +67,7 @@ public class TaskService {
         return this.taskRepository.save(newObj);
     }
 
-    public void delete(long id) {
+    public void delete(Long id) {
         findById(id);
         try {
             this.taskRepository.deleteById(id);
@@ -58,9 +75,11 @@ public class TaskService {
             throw new DataBindingViolationException(
                 "Não é possível excluir tarefa com usuários associados!" );
         }
-        
     }
 
+    private Boolean userHasTask(UserSpringSecurity userSpringSecurity, Task task) {
+        return task.getUser().getId().equals(userSpringSecurity.getId());
+    }
 }
 
 
