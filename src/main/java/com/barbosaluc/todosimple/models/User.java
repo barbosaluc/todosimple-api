@@ -46,7 +46,7 @@ public class User {
     @NotBlank
     private String username;
 
-    @Column(name = "password", length = 06, nullable = false)
+    @Column(name = "password", length = 60, nullable = false)
     @JsonProperty(access = Access.WRITE_ONLY)
     @Size(min = 8, max = 60)
     @NotBlank

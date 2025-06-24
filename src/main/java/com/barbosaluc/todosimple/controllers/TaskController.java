@@ -43,8 +43,8 @@ public class TaskController {
     }
 
     @PostMapping
-    @Validated(CreateTask.class)
-    public ResponseEntity<Void> findById(@Valid @RequestBody Task obj) {
+    @Validated
+    public ResponseEntity<Void> create(@Valid @RequestBody Task obj) {
         this.taskService.create(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -52,8 +52,8 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    @Validated(Task.upadateTask.class)
-    public ResponseEntity<Void> update (@Valid @RequestBody Task obj,@PathVariable long id) {
+    @Validated
+    public ResponseEntity<Void> update(@Valid @RequestBody Task obj, @PathVariable Long id) {
         obj.setId(id);
         this.taskService.update(obj);
         return ResponseEntity.noContent().build();
