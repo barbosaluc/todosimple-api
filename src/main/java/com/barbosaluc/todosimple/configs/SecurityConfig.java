@@ -23,7 +23,6 @@ import com.barbosaluc.todosimple.security.JWTAuthenticationFilter;
 import com.barbosaluc.todosimple.security.JWTAuthorizationFilter;
 import com.barbosaluc.todosimple.security.JWTUtil;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -36,22 +35,20 @@ public class SecurityConfig {
 
     @Autowired
     private JWTUtil jwtUtil;
-    
+
     private static final String[] PUBLIC_MATCHERS = {
-        "/"
-    };
-        
-    private static final String[] PUBLIC_MATCHERS_POST = {
-        "/user",
-        "/login"
+            "/"
     };
 
+    private static final String[] PUBLIC_MATCHERS_POST = {
+            "/user",
+            "/login"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-          http.cors().and().csrf().disable();
-
+        http.cors().and().csrf().disable();
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http
                 .getSharedObject(AuthenticationManagerBuilder.class);
@@ -59,14 +56,14 @@ public class SecurityConfig {
                 .passwordEncoder(bCryptPasswordEncoder());
         this.authenticationManager = authenticationManagerBuilder.build();
 
-        http.authorizeRequests(requests -> requests
+        http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
                 .antMatchers(PUBLIC_MATCHERS).permitAll()
-                .anyRequest().authenticated().and())
+                .anyRequest().authenticated().and()
                 .authenticationManager(authenticationManager);
 
-        http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, jwtUtil));
-        http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, jwtUtil, 
+        http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil,
                 this.userDetailsService));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -77,7 +74,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
-        configuration.setAllowedMethods(Arrays.asList ("POST", "GET", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
